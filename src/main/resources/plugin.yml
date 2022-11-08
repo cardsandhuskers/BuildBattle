@@ -1,0 +1,20 @@
+name: BuildBattle
+version: '${project.version}'
+main: io.github.cardsandhuskers.buildbattle.BuildBattle
+api-version: 1.19
+authors: [ cardsandhuskers ]
+description: Build Battle plugin
+depend: [PlayerPoints, PlaceholderAPI, Teams]
+commands:
+  setBuildBattleArena:
+    description: sets the spawn point for the specified arena and corner
+    command: /<command> [arena] [pos Number]
+  startBuildBattle:
+    description: starts the game
+    command: /<command>
+  setBuildBattleSpawn:
+    description: sets the world spawn for build battle
+    command: /<command>
+  setLobby:
+    description: sets the location of the lobby
+    command: /<command>
