@@ -19,5 +19,11 @@ public class GameEndHandler {
         for(Player p: Bukkit.getOnlinePlayers()) {
             p.teleport(lobby);
         }
+        for(Player p:Bukkit.getOnlinePlayers()) {
+            if(p.isOp()) {
+                p.performCommand("startRound");
+                break;
+            }
+        }
     }
 }

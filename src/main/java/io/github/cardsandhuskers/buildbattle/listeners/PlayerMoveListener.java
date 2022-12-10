@@ -22,8 +22,8 @@ public class PlayerMoveListener implements Listener {
         Player p = e.getPlayer();
         //get arena player is in and check y
         for(Arena a: arenaList) {
-            if(l.getX() >= a.getCoordinate("lower", 'x') && l.getX() <= a.getCoordinate("higher", 'x')) {
-                if(l.getZ() >= a.getCoordinate("lower", 'z') && l.getZ() <= a.getCoordinate("higher", 'z')) {
+            if(l.getX() >= a.getCoordinate("lower", 'x') - 4 && l.getX() <= a.getCoordinate("higher", 'x') + 4) {
+                if(l.getZ() >= a.getCoordinate("lower", 'z') - 4 && l.getZ() <= a.getCoordinate("higher", 'z') + 4) {
                     if(l.getY() >= a.getCoordinate("upper", 'y')) {
                         a.teleportPlayerToSpawn(p);
                     }

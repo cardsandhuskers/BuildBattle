@@ -33,6 +33,11 @@ public class PlayerJoinListener implements Listener {
 
         if(BuildBattle.timerStatus.equalsIgnoreCase("game starting")) {
             p.teleport(plugin.getConfig().getLocation("WorldSpawn"));
+            if(handler.getPlayerTeam(p) == null) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, ()-> {
+                    p.setGameMode(GameMode.SPECTATOR);
+                }, 20L);
+            }
         } else if(BuildBattle.timerStatus.equalsIgnoreCase("vote")) {
             if(handler.getPlayerTeam(p) != null) {
                 for(Player player:handler.getPlayerTeam(p).getOnlinePlayers()) {
@@ -40,6 +45,11 @@ public class PlayerJoinListener implements Listener {
                         p.teleport(player.getLocation());
                     }
                 }
+            } else {
+                p.teleport(plugin.getConfig().getLocation("WorldSpawn"));
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, ()-> {
+                    p.setGameMode(GameMode.SPECTATOR);
+                }, 20L);
             }
         } else {
             if(handler.getPlayerTeam(p) != null) {

@@ -11,6 +11,7 @@ import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -62,9 +63,13 @@ public class GameStartHandler {
      */
     private void themeVotingTimer() {
         Countdown timer = new Countdown((JavaPlugin)plugin,
-                20,
+                //should be 40 seconds
+                plugin.getConfig().getInt("ThemeVotingTime"),
                 //Timer Start
                 () -> {
+                    for(Team t: handler.getTeams()) {
+                        t.resetTempPoints();
+                    }
                     BuildBattle.timeVar = 20;
                     BuildBattle.timerStatus = "Theme Voting";
                     for(Player p:Bukkit.getOnlinePlayers()) {
@@ -89,6 +94,7 @@ public class GameStartHandler {
                     buildTimer();
                     for(Player p: Bukkit.getOnlinePlayers()) {
                         p.closeInventory();
+                        p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                     }
                     votingInventoryHandler.assignTheme();
                 },
@@ -96,7 +102,12 @@ public class GameStartHandler {
                 //Each Second
                 (t) -> {
                     BuildBattle.timeVar = t.getSecondsLeft();
-
+                    if(t.getSecondsLeft() <= 5) {
+                        for(Player p:Bukkit.getOnlinePlayers()) {
+                            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
+                        }
+                        Bukkit.broadcastMessage(ChatColor.AQUA + "Voting time ends in " + ChatColor.YELLOW + t.getSecondsLeft() + ChatColor.AQUA + " seconds!");
+                    }
                 }
         );
 
@@ -110,7 +121,8 @@ public class GameStartHandler {
      */
     private void buildTimer() {
         Countdown timer = new Countdown((JavaPlugin) plugin,
-                30,
+                //should be 600 seconds
+                plugin.getConfig().getInt("BuildTime"),
                 //Timer Start
                 () -> {
                     BuildBattle.timeVar = 10;
@@ -146,7 +158,24 @@ public class GameStartHandler {
                 //Each Second
                 (t) -> {
                     BuildBattle.timeVar = t.getSecondsLeft();
-
+                    if(t.getSecondsLeft() == 20) {
+                        for(Player p:Bukkit.getOnlinePlayers()) {
+                            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+                        }
+                        Bukkit.broadcastMessage(ChatColor.AQUA + "Build time ends in " + ChatColor.YELLOW + t.getSecondsLeft() + ChatColor.AQUA + " seconds!");
+                    }
+                    if(t.getSecondsLeft() == 10) {
+                        for(Player p:Bukkit.getOnlinePlayers()) {
+                            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+                        }
+                        Bukkit.broadcastMessage(ChatColor.AQUA + "Build time ends in " + ChatColor.YELLOW + t.getSecondsLeft() + ChatColor.AQUA + " seconds!");
+                    }
+                    if(t.getSecondsLeft() <= 5) {
+                        for(Player p:Bukkit.getOnlinePlayers()) {
+                            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+                        }
+                        Bukkit.broadcastMessage(ChatColor.AQUA + "Build time ends in " + ChatColor.YELLOW + t.getSecondsLeft() + ChatColor.AQUA + " seconds!");
+                    }
                 }
         );
 

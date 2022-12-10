@@ -53,7 +53,8 @@ public class ItemClickListener implements Listener {
                 int val = 0;
                 Player p = e.getPlayer();
                 Arena arena = getCurrentArena(p);
-                if(handler.getPlayerTeam(p).equals(arena.getTeam())) {
+                //seems occasional null arenas arise, this should at least stop that from causing error, but things still may not work right
+                if(arena != null && handler.getPlayerTeam(p).equals(arena.getTeam())) {
                     p.sendMessage(ChatColor.RED + "You cannot Vote on your own Build!");
                 } else {
                     switch(mat) {
@@ -79,6 +80,12 @@ public class ItemClickListener implements Listener {
                             break;
                     }
                     buildVoteMap.put(e.getPlayer(), val);
+                }
+            }
+            if(e.getMaterial() == Material.FLINT_AND_STEEL) {
+                if(e.getClickedBlock().getType() == Material.TNT) {
+                    e.setCancelled(true);
+                    e.getPlayer().sendMessage(ChatColor.RED + "NO, Absolutely not");
                 }
             }
         }

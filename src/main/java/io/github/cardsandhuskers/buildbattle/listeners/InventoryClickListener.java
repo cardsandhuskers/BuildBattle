@@ -46,10 +46,10 @@ public class InventoryClickListener implements Listener {
                     if(t != null) {
                         for(Arena a:arenaList) {
                             if(a.getTeam().equals(t)) {
-                                if(isValidFloor(mat) != null) {
-                                    a.setFloor(isValidFloor(mat));
+                                try {
+                                    a.setFloor(mat);
                                 }
-                                else {
+                                catch(Exception exception) {
                                     p.sendMessage(ChatColor.RED + "Invalid Floor type");
                                 }
                             }
@@ -65,21 +65,6 @@ public class InventoryClickListener implements Listener {
 
                 e.setCancelled(true);
             }
-        }
-
-    }
-    public Material isValidFloor(Material mat) {
-        switch (mat) {
-            case WATER_BUCKET:
-                return Material.WATER;
-            case LAVA_BUCKET:
-                return Material.LAVA;
-            //all of the things that return null
-            case IRON_AXE:
-            case IRON_INGOT:
-                return null;
-            default:
-                return mat;
         }
     }
 }

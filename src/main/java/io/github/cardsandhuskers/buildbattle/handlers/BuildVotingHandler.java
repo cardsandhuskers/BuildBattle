@@ -93,7 +93,7 @@ public class BuildVotingHandler {
         //get all the people who have voted and remove voting item from them
         for(Player p: buildVoteMap.keySet()) {
             //if they're not in their own arena
-            if(!(handler.getPlayerTeam(p) == null && handler.getPlayerTeam(p).equals(t))) {
+            if(p != null && handler.getPlayerTeam(p) != null && handler.getPlayerTeam(p).equals(t)) {
 
                 int val = buildVoteMap.get(p);
 
@@ -145,7 +145,8 @@ public class BuildVotingHandler {
      */
     private void buildVotingTimer() {
         Countdown timer = new Countdown((JavaPlugin) plugin,
-                20,
+                //should be 25
+                plugin.getConfig().getInt("BuildVotingTime"),
                 //Timer Start
                 () -> {
                     BuildBattle.timeVar = 20;
@@ -209,7 +210,7 @@ public class BuildVotingHandler {
             (t) -> {
                 BuildBattle.timeVar = t.getSecondsLeft();
 
-                if(t.getSecondsLeft() == 19) {
+                if(t.getSecondsLeft() == 20) {
                     //broadcast winner
                     Bukkit.broadcastMessage(ChatColor.DARK_BLUE + "------------------------------");
                     Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "Winner:");
@@ -225,7 +226,7 @@ public class BuildVotingHandler {
 
 
                 }
-                if(t.getSecondsLeft() == 18) {
+                if(t.getSecondsLeft() == 15) {
                     //broadcast everyone else's scores for the game
                     Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "Results:");
                     int counter = 1;

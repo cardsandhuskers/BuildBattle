@@ -7,6 +7,7 @@ import io.github.cardsandhuskers.buildbattle.handlers.VotingInventoryHandler;
 import io.github.cardsandhuskers.buildbattle.listeners.BlockBreakListener;
 import io.github.cardsandhuskers.buildbattle.listeners.BlockPlaceListener;
 import io.github.cardsandhuskers.buildbattle.listeners.PlayerJoinListener;
+import io.github.cardsandhuskers.buildbattle.listeners.TNTIgniteListener;
 import io.github.cardsandhuskers.buildbattle.objects.Arena;
 import io.github.cardsandhuskers.buildbattle.objects.Countdown;
 import io.github.cardsandhuskers.teams.objects.Team;
@@ -73,8 +74,9 @@ public class StartGameCommand implements CommandExecutor {
     }
 
     public void pregameTimer() {
+        int totalTime = plugin.getConfig().getInt("PregameTime");
         Countdown timer = new Countdown((JavaPlugin)plugin,
-                5,
+                15,
                 //Timer Start
                 () -> {
                     BuildBattle.timeVar = 10;
@@ -86,7 +88,9 @@ public class StartGameCommand implements CommandExecutor {
                         for(Player p:Bukkit.getOnlinePlayers()) {
                             p.teleport(l);
                             if(handler.getPlayerTeam(p) == null) {
-                                p.setGameMode(GameMode.SPECTATOR);
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, ()-> {
+                                    p.setGameMode(GameMode.SPECTATOR);
+                                }, 10L);
                             }
                         }
                     }
@@ -95,12 +99,16 @@ public class StartGameCommand implements CommandExecutor {
                     getServer().getPluginManager().registerEvents(new BlockBreakListener(arenaList), plugin);
                     getServer().getPluginManager().registerEvents(new BlockPlaceListener(arenaList), plugin);
                     getServer().getPluginManager().registerEvents(new PlayerJoinListener(plugin, arenaList), plugin);
+                    getServer().getPluginManager().registerEvents(new TNTIgniteListener(), plugin);
 
 
                 },
 
                 //Timer End
                 () -> {
+                    for(Player p:Bukkit.getOnlinePlayers()) {
+                        p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+                    }
                     BuildBattle.timeVar = 0;
 
                     gameStartHandler = new GameStartHandler(plugin, arenaList, ppAPI);
@@ -110,7 +118,12 @@ public class StartGameCommand implements CommandExecutor {
                 //Each Second
                 (t) -> {
                     BuildBattle.timeVar = t.getSecondsLeft();
-                    Bukkit.broadcastMessage(t.getSecondsLeft() + "");
+                    if(t.getSecondsLeft() <= 5) {
+                        for(Player p:Bukkit.getOnlinePlayers()) {
+                            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
+                        }
+                        Bukkit.broadcastMessage(ChatColor.AQUA + "Game Starts in " + ChatColor.YELLOW + t.getSecondsLeft() + ChatColor.AQUA + " seconds!");
+                    }
 
                 }
         );

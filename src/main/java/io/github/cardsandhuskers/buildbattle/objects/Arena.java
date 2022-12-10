@@ -95,7 +95,7 @@ public class Arena {
                         //System.out.println(b.getY());
                     }
                 }
-            }, 10L * counter);
+            }, 5L * counter);
             counter++;
         }
     }
