@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static io.github.cardsandhuskers.buildbattle.BuildBattle.handler;
+import static io.github.cardsandhuskers.buildbattle.BuildBattle.multiplier;
 
 public class BuildVotingHandler {
     private BuildBattle plugin;
@@ -93,16 +94,17 @@ public class BuildVotingHandler {
         //get all the people who have voted and remove voting item from them
         for(Player p: buildVoteMap.keySet()) {
             //if they're not in their own arena
-            if(p != null && handler.getPlayerTeam(p) != null && handler.getPlayerTeam(p).equals(t)) {
+            if(p != null && handler.getPlayerTeam(p) != null && !handler.getPlayerTeam(p).equals(t)) {
 
                 int val = buildVoteMap.get(p);
-
                 ArrayList<Integer> temp = itemNumbersMap.get(p);
                 //error handling
                 if(temp != null) {
                     //removes item corresponding to their vote from their inventory
                     temp.set(val - 1, temp.get(val - 1) - 1);
                 }
+
+                System.out.println(buildVoteMap.get(p));
             }
         }
 
@@ -115,14 +117,14 @@ public class BuildVotingHandler {
                 }
             }
         }
-        System.out.println("NUM PLAYERS: " + numPlayers + " TOTAL: " + total + "") ;
+        //System.out.println("NUM PLAYERS: " + numPlayers + " TOTAL: " + total + "") ;
         //calculate total points, first make sure everyone has voted, and if they haven't, give them medium votes
         if(buildVoteMap.size() < numPlayers) {
             total+= (numPlayers - buildVoteMap.size()) * 3;
         }
-        System.out.println("NUM PLAYERS: " + numPlayers + " TOTAL: " + total + "") ;
+        //System.out.println("NUM PLAYERS: " + numPlayers + " TOTAL: " + total + "") ;
         //add 20 points to every int, so that vote quantities are 30-70 points
-        int totalPoints = (20 * numPlayers) + (10 * total);
+        int totalPoints = (int)(((20 * numPlayers) + (10 * total)) * multiplier);
 
         //divide total points by num players on the team
         int playerPoints = totalPoints/t.getSize();
@@ -190,7 +192,7 @@ public class BuildVotingHandler {
 
         Arena finalWinnerArena = winnerArena;
         Countdown timer = new Countdown((JavaPlugin) plugin,
-            20,
+            plugin.getConfig().getInt("GameEndTime"),
             //Timer Start
             () -> {
                 BuildBattle.timeVar = 15;
@@ -210,7 +212,7 @@ public class BuildVotingHandler {
             (t) -> {
                 BuildBattle.timeVar = t.getSecondsLeft();
 
-                if(t.getSecondsLeft() == 20) {
+                if(t.getSecondsLeft() == t.getTotalSeconds() - 1) {
                     //broadcast winner
                     Bukkit.broadcastMessage(ChatColor.DARK_BLUE + "------------------------------");
                     Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "Winner:");
@@ -226,7 +228,7 @@ public class BuildVotingHandler {
 
 
                 }
-                if(t.getSecondsLeft() == 15) {
+                if(t.getSecondsLeft() == t.getTotalSeconds() - 5) {
                     //broadcast everyone else's scores for the game
                     Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "Results:");
                     int counter = 1;
@@ -277,7 +279,6 @@ public class BuildVotingHandler {
             for(Player p:t.getOnlinePlayers()) {
                 ArrayList<Integer> tempList = itemNumbersMap.get(p);
                 if(tempList != null) {
-
                     Inventory i = p.getInventory();
 
                     terrible.setAmount(tempList.get(0));

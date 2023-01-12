@@ -62,6 +62,7 @@ public class VotingInventoryHandler {
      * updates all open menus
      */
     public void updateMenus() {
+        System.out.println(openMenus);
         for(VotingMenu v:openMenus) {
             v.openInventory();
         }

@@ -5,6 +5,7 @@ import io.github.cardsandhuskers.buildbattle.handlers.VoteCounter;
 import io.github.cardsandhuskers.buildbattle.handlers.VotingInventoryHandler;
 import io.github.cardsandhuskers.buildbattle.objects.Arena;
 import io.github.cardsandhuskers.buildbattle.objects.VotingMenu;
+import io.github.cardsandhuskers.teams.objects.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -37,6 +38,11 @@ public class ItemClickListener implements Listener {
     @EventHandler
     public void onInventoryClick(PlayerInteractEvent e) {
         if(e.getItem() != null && handler.getPlayerTeam(e.getPlayer()) != null) {
+
+            if(e.getItem().getType() == Material.ENDER_PEARL) {
+                e.setCancelled(true);
+            }
+
             if (BuildBattle.timerStatus.equalsIgnoreCase("theme voting")) {
                 if(e.getMaterial() == Material.NETHER_STAR) {
                     VotingMenu m = votingInventoryHandler.getMenu(e.getPlayer());
@@ -46,6 +52,20 @@ public class ItemClickListener implements Listener {
                 if(e.getMaterial() == Material.NETHER_STAR) {
                     Inventory inventory = Bukkit.createInventory(e.getPlayer(), 9, ChatColor.RED + "Click a Block to set the Floor");
                     e.getPlayer().openInventory(inventory);
+                }
+                if(e.getMaterial() == Material.LAVA_BUCKET || e.getMaterial() == Material.WATER_BUCKET) {
+                    Team t = handler.getPlayerTeam(e.getPlayer());
+                    boolean cancel = true;
+                    for(Arena a :arenaList) {
+                        if(a.getTeam().equals(t)) {
+                            if(a.isValidLocation(e.getClickedBlock().getLocation())) {
+                                cancel = false;
+                            }
+                        }
+                    }
+                    if(cancel) {
+                        e.setCancelled(true);
+                    }
                 }
 
             } else if (BuildBattle.timerStatus.equalsIgnoreCase("vote")) {

@@ -127,7 +127,7 @@ public class GameStartHandler {
                 () -> {
                     BuildBattle.timeVar = 10;
                     BuildBattle.timerStatus = "Build Time";
-
+                    Bukkit.broadcastMessage(ChatColor.GRAY + "Use the Nether Star to Change the Floor block!");
                     //give every player a change floor nether star
                     ItemStack floorItem = new ItemStack(Material.NETHER_STAR, 1);
                     ItemMeta floorMeta = floorItem.getItemMeta();

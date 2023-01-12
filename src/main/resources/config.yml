@@ -1,0 +1,20 @@
+Themes:
+  - Among Us
+  - Triangle
+  - Minecraft
+  - Rainbow
+  - Monkey
+  - Bear
+
+GameStartTime: 20
+ThemeVotingTime: 30
+BuildTime: 60
+BuildVotingTime: 25
+GameEndTime: 30
+
+#Points for each vote type (not fully implemented)
+amazing: 70
+great: 60
+good: 50
+bad: 40
+terrible: 30

@@ -4,10 +4,7 @@ import io.github.cardsandhuskers.buildbattle.BuildBattle;
 import io.github.cardsandhuskers.buildbattle.handlers.BuildVotingHandler;
 import io.github.cardsandhuskers.buildbattle.handlers.GameStartHandler;
 import io.github.cardsandhuskers.buildbattle.handlers.VotingInventoryHandler;
-import io.github.cardsandhuskers.buildbattle.listeners.BlockBreakListener;
-import io.github.cardsandhuskers.buildbattle.listeners.BlockPlaceListener;
-import io.github.cardsandhuskers.buildbattle.listeners.PlayerJoinListener;
-import io.github.cardsandhuskers.buildbattle.listeners.TNTIgniteListener;
+import io.github.cardsandhuskers.buildbattle.listeners.*;
 import io.github.cardsandhuskers.buildbattle.objects.Arena;
 import io.github.cardsandhuskers.buildbattle.objects.Countdown;
 import io.github.cardsandhuskers.teams.objects.Team;
@@ -16,6 +13,8 @@ import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -76,9 +75,15 @@ public class StartGameCommand implements CommandExecutor {
     public void pregameTimer() {
         int totalTime = plugin.getConfig().getInt("PregameTime");
         Countdown timer = new Countdown((JavaPlugin)plugin,
-                15,
+                plugin.getConfig().getInt("GameStartTime"),
                 //Timer Start
                 () -> {
+                    for(Entity e:plugin.getConfig().getLocation("WorldSpawn").getWorld().getEntities()) {
+                        if(e.getType() == EntityType.PLAYER) continue;
+                        e.remove();
+                    }
+
+
                     BuildBattle.timeVar = 10;
                     BuildBattle.timerStatus = "Game Starting";
                     BuildVotingHandler.counter = 0;
@@ -100,6 +105,7 @@ public class StartGameCommand implements CommandExecutor {
                     getServer().getPluginManager().registerEvents(new BlockPlaceListener(arenaList), plugin);
                     getServer().getPluginManager().registerEvents(new PlayerJoinListener(plugin, arenaList), plugin);
                     getServer().getPluginManager().registerEvents(new TNTIgniteListener(), plugin);
+                    getServer().getPluginManager().registerEvents(new PlayerDropListener(), plugin);
 
 
                 },
@@ -118,11 +124,33 @@ public class StartGameCommand implements CommandExecutor {
                 //Each Second
                 (t) -> {
                     BuildBattle.timeVar = t.getSecondsLeft();
+
+
+
                     if(t.getSecondsLeft() <= 5) {
                         for(Player p:Bukkit.getOnlinePlayers()) {
                             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
                         }
                         Bukkit.broadcastMessage(ChatColor.AQUA + "Game Starts in " + ChatColor.YELLOW + t.getSecondsLeft() + ChatColor.AQUA + " seconds!");
+                    }
+                    if(t.getSecondsLeft() == t.getTotalSeconds() - 2) {
+                        Bukkit.broadcastMessage(ChatColor.STRIKETHROUGH + "----------------------------------------");
+                        Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Build Battle");
+                        Bukkit.broadcastMessage(ChatColor.BLUE + "" + ChatColor.BOLD + "How To Play:");
+                        Bukkit.broadcastMessage("Each team will get " + plugin.getConfig().getInt("BuildTime")/60 + " minutes to build something according to the theme." +
+                                "\nYou can vote on the theme for the build from a list of options." +
+                                "\nAt the end, you'll vote on everyone else's build. You will have a limited number of each vote type.");
+                        Bukkit.broadcastMessage(ChatColor.STRIKETHROUGH + "----------------------------------------");
+                    }
+                    if(t.getSecondsLeft() == t.getTotalSeconds()  - 12) {
+                        Bukkit.broadcastMessage(ChatColor.STRIKETHROUGH + "----------------------------------------");
+                        Bukkit.broadcastMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "How is the game Scored:");
+                        Bukkit.broadcastMessage("For an " + ChatColor.AQUA + ChatColor.BOLD + "Amazing" + ChatColor.RESET +  " vote received: " + ChatColor.GOLD + (int)(plugin.getConfig().getInt("amazing") * multiplier) + ChatColor.RESET + " points." +
+                                              "\nFor a " + ChatColor.DARK_GREEN + ChatColor.BOLD + "Great" + ChatColor.RESET +  " vote received: " + ChatColor.GOLD + (int)(plugin.getConfig().getInt("great") * multiplier) + ChatColor.RESET + " points." +
+                                              "\nFor a " + ChatColor.GREEN + ChatColor.BOLD + "Good" + ChatColor.RESET +  " vote received: " + ChatColor.GOLD + (int)(plugin.getConfig().getInt("good") * multiplier) + ChatColor.RESET + " points." +
+                                              "\nFor a " + ChatColor.RED + ChatColor.BOLD + "Bad" + ChatColor.RESET +  " vote received: " + ChatColor.GOLD + (int)(plugin.getConfig().getInt("bad") * multiplier) + ChatColor.RESET + " points." +
+                                              "\nFor a " + ChatColor.DARK_RED + ChatColor.BOLD + "Terrible" + ChatColor.RESET +  " vote received: " + ChatColor.GOLD + (int)(plugin.getConfig().getInt("terrible") * multiplier) + ChatColor.RESET + " points.");
+                        Bukkit.broadcastMessage(ChatColor.STRIKETHROUGH + "----------------------------------------");
                     }
 
                 }
