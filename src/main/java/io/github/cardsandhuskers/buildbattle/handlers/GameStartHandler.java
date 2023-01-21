@@ -30,7 +30,7 @@ public class GameStartHandler {
     private VoteCounter voteCounter;
     private PlayerPointsAPI ppAPI;
     private VotingInventoryHandler votingInventoryHandler;
-    private HashMap<Player, Integer> buildVoteMap = new HashMap<>();
+    private HashMap<Player, ItemClickListener.Vote> buildVoteMap = new HashMap<>();
     public GameStartHandler(BuildBattle plugin, ArrayList<Arena> arenaList, PlayerPointsAPI ppAPI) {
         this.ppAPI = ppAPI;
         this.plugin = plugin;
@@ -150,7 +150,7 @@ public class GameStartHandler {
                         Inventory inv = p.getInventory();
                         inv.clear();
                     }
-                    BuildVotingHandler buildVotingHandler = new BuildVotingHandler(plugin, arenaList, buildVoteMap, ppAPI);
+                    BuildVotingHandler buildVotingHandler = new BuildVotingHandler(plugin, arenaList, buildVoteMap);
                     buildVotingHandler.startVoting();
 
                 },

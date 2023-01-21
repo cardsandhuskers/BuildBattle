@@ -12,7 +12,7 @@ BuildTime: 60
 BuildVotingTime: 25
 GameEndTime: 30
 
-#Points for each vote type (not fully implemented)
+#Points for each vote type
 amazing: 70
 great: 60
 good: 50

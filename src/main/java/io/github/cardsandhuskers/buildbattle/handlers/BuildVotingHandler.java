@@ -1,6 +1,7 @@
 package io.github.cardsandhuskers.buildbattle.handlers;
 
 import io.github.cardsandhuskers.buildbattle.BuildBattle;
+import io.github.cardsandhuskers.buildbattle.listeners.ItemClickListener;
 import io.github.cardsandhuskers.buildbattle.objects.Arena;
 import io.github.cardsandhuskers.buildbattle.objects.Countdown;
 import io.github.cardsandhuskers.teams.objects.Team;
@@ -22,17 +23,15 @@ import static io.github.cardsandhuskers.buildbattle.BuildBattle.multiplier;
 public class BuildVotingHandler {
     private BuildBattle plugin;
     private ArrayList<Arena> arenaList;
-    private HashMap<Player, Integer> buildVoteMap;
-    private PlayerPointsAPI ppAPI;
+    private HashMap<Player, ItemClickListener.Vote> buildVoteMap;
     private HashMap<OfflinePlayer, ArrayList<Integer>> itemNumbersMap;
 
     public static int counter = 0;
 
-    public BuildVotingHandler(BuildBattle plugin, ArrayList<Arena> arenaList, HashMap buildVoteMap, PlayerPointsAPI ppAPI) {
+    public BuildVotingHandler(BuildBattle plugin, ArrayList<Arena> arenaList, HashMap buildVoteMap) {
         this.buildVoteMap = buildVoteMap;
         this.plugin = plugin;
         this.arenaList = arenaList;
-        this.ppAPI = ppAPI;
         counter = 1;
         itemNumbersMap = new HashMap<>();
 
@@ -76,8 +75,10 @@ public class BuildVotingHandler {
      * Counts votes and updates relevant things
      */
     private void countVotes() {
+        System.out.println("Round counter: " + counter);
+        //if(counter < 1) counter = 1;
         Team t = arenaList.get(counter - 1).getTeam();
-
+        if(t == null) return;
         //if player is on the same team as the arena, cancel vote
         for(Player p: t.getOnlinePlayers()) {
             if(buildVoteMap.get(p) != null) {
@@ -85,23 +86,49 @@ public class BuildVotingHandler {
             }
         }
 
-        //total "votes" each vote value is int 1-5
-        int total = 0;
-        for(int i:buildVoteMap.values()) {
-            total+= i;
-        }
+        //total number of voters
+        int numVoters = 0;
+        //sum of points to give team
+        int points = 0;
 
         //get all the people who have voted and remove voting item from them
         for(Player p: buildVoteMap.keySet()) {
-            //if they're not in their own arena
-            if(p != null && handler.getPlayerTeam(p) != null && !handler.getPlayerTeam(p).equals(t)) {
+            //if they're not in their own arena (I think this is redundant)
+            if(p != null /*&& handler.getPlayerTeam(p) != null && !handler.getPlayerTeam(p).equals(t)*/) {
+                numVoters ++;
 
-                int val = buildVoteMap.get(p);
-                ArrayList<Integer> temp = itemNumbersMap.get(p);
+                ItemClickListener.Vote vote = buildVoteMap.get(p);
+
+                ArrayList<Integer> playerItems = itemNumbersMap.get(p);
+
+                int voteIndex = 2;
+                switch(vote) {
+                    case TERRIBLE:
+                        voteIndex = 0;
+                        points += plugin.getConfig().getInt("terrible");
+                    break;
+                    case BAD:
+                        voteIndex = 1;
+                        points += plugin.getConfig().getInt("bad");
+                    break;
+                    case GOOD:
+                        voteIndex = 2;
+                        points += plugin.getConfig().getInt("good");
+                    break;
+                    case GREAT:
+                        voteIndex = 3;
+                        points += plugin.getConfig().getInt("great");
+                    break;
+                    case AMAZING:
+                        voteIndex = 4;
+                        points += plugin.getConfig().getInt("amazing");
+                    break;
+                }
+
                 //error handling
-                if(temp != null) {
+                if(playerItems != null) {
                     //removes item corresponding to their vote from their inventory
-                    temp.set(val - 1, temp.get(val - 1) - 1);
+                    playerItems.set(voteIndex, playerItems.get(voteIndex) - 1);
                 }
 
                 System.out.println(buildVoteMap.get(p));
@@ -110,33 +137,30 @@ public class BuildVotingHandler {
 
         //count players on teams to get total number of participating players
         int numPlayers = 0;
+
         for(Team team: handler.getTeams()) {
-            for(Player p:team.getOnlinePlayers()) {
-                if(!(team.equals(t))) {
+            if(!(team.equals(t))) {
+                for(Player p:team.getOnlinePlayers()) {
                     numPlayers++;
                 }
             }
         }
+
         //System.out.println("NUM PLAYERS: " + numPlayers + " TOTAL: " + total + "") ;
         //calculate total points, first make sure everyone has voted, and if they haven't, give them medium votes
-        if(buildVoteMap.size() < numPlayers) {
-            total+= (numPlayers - buildVoteMap.size()) * 3;
+        if(numVoters < numPlayers) {
+            points += (numPlayers - numVoters) * plugin.getConfig().getInt("good");
         }
         //System.out.println("NUM PLAYERS: " + numPlayers + " TOTAL: " + total + "") ;
-        //add 20 points to every int, so that vote quantities are 30-70 points
-        int totalPoints = (int)(((20 * numPlayers) + (10 * total)) * multiplier);
 
-        //divide total points by num players on the team
-        int playerPoints = totalPoints/t.getSize();
+        //add in multiplier and divide total points by num players on the team
+        points = (int) (points * multiplier);
+        int playerPoints = points/t.getSize();
         //for each player on the given team, give them points
-        for(OfflinePlayer p:t.getPlayers()) {
-            //error handling in case a player is DCed
-            if(p != null) {
-                //give temp points as well as regular points
-                ppAPI.give(p.getUniqueId(), playerPoints);
-                t.addTempPoints((Player) p, playerPoints);
-            }
+        for(Player p:t.getOnlinePlayers()) {
+            t.addTempPoints(p, playerPoints);
         }
+
         giveVotingItems();
 
     }
@@ -233,7 +257,7 @@ public class BuildVotingHandler {
                     Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "Results:");
                     int counter = 1;
                     for(Team team:teamList) {
-                        Bukkit.broadcastMessage(counter + ". " + team.color + ChatColor.BOLD +  team.getTeamName() + ChatColor.RESET + " Points: " + team.getTempPoints());
+                        Bukkit.broadcastMessage(counter + ". " + team.color + ChatColor.BOLD +  team.getTeamName() + ChatColor.RESET + " Points: " + (int)team.getTempPoints());
                         counter++;
                     }
                 }
