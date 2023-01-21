@@ -70,6 +70,7 @@ public class ItemClickListener implements Listener {
 
             } else if (BuildBattle.timerStatus.equalsIgnoreCase("vote")) {
                 Material mat = e.getMaterial();
+                //vote defaults to good in case they manage to obtain and click an item that is not a voting item
                 Vote vote = Vote.GOOD;
                 Player p = e.getPlayer();
                 Arena arena = getCurrentArena(p);
