@@ -35,7 +35,7 @@ public class SetArenaPosCommand implements CommandExecutor {
                         p.sendMessage(ChatColor.RED + "ERROR: Arguments must be integers");
                     }
                 } else {
-                    p.sendMessage(ChatColor.RED + "Incorrect Usage: /setBattleBoxArenaSpawn [ArenaNumber] [Position 1 or 2]");
+                    p.sendMessage(ChatColor.RED + "Incorrect Usage: /setBuildBattleArena [ArenaNumber] [Position 1 or 2]");
                 }
             } else {
                 p.sendMessage(ChatColor.RED + "You do not have Permission to do this");

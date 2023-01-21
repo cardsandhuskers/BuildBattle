@@ -56,9 +56,10 @@ public final class BuildBattle extends JavaPlugin {
         getCommand("setBuildBattleSpawn").setExecutor(new SetWorldSpawnCommand(this));
         getCommand("setLobby").setExecutor(new SetLobbyCommand(this));
 
-
-
         handler = Teams.handler;
+
+        getConfig().options().copyDefaults(true);
+        saveDefaultConfig();
     }
 
     @Override

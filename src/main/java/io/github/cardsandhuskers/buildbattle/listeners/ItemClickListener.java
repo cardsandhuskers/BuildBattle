@@ -25,7 +25,7 @@ public class ItemClickListener implements Listener {
 
     private VoteCounter voteCounter;
     private VotingInventoryHandler votingInventoryHandler;
-    private HashMap<Player, Integer> buildVoteMap;
+    private HashMap<Player, Vote> buildVoteMap;
     private ArrayList<Arena> arenaList;
 
     public ItemClickListener(VoteCounter voteCounter, VotingInventoryHandler votingInventoryHandler, HashMap buildVoteMap, ArrayList<Arena> arenaList) {
@@ -70,7 +70,7 @@ public class ItemClickListener implements Listener {
 
             } else if (BuildBattle.timerStatus.equalsIgnoreCase("vote")) {
                 Material mat = e.getMaterial();
-                int val = 0;
+                Vote vote = Vote.GOOD;
                 Player p = e.getPlayer();
                 Arena arena = getCurrentArena(p);
                 //seems occasional null arenas arise, this should at least stop that from causing error, but things still may not work right
@@ -79,27 +79,27 @@ public class ItemClickListener implements Listener {
                 } else {
                     switch(mat) {
                         case RED_TERRACOTTA:
-                            val = 1;
+                            vote = Vote.TERRIBLE;
                             p.sendMessage("You voted " + ChatColor.DARK_RED + "" + ChatColor.BOLD + "Terrible");
                             break;
                         case PINK_TERRACOTTA:
-                            val = 2;
+                            vote = Vote.BAD;
                             p.sendMessage("You voted " + ChatColor.RED + "" + ChatColor.BOLD + "Bad");
                             break;
                         case LIME_TERRACOTTA:
-                            val = 3;
+                            vote = Vote.GOOD;
                             p.sendMessage("You voted " + ChatColor.GREEN + "" + ChatColor.BOLD + "Good");
                             break;
                         case GREEN_TERRACOTTA:
-                            val = 4;
+                            vote = Vote.GREAT;
                             p.sendMessage("You voted " + ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "Great");
                             break;
                         case LIGHT_BLUE_TERRACOTTA:
-                            val = 5;
+                            vote = Vote.AMAZING;
                             p.sendMessage("You voted " + ChatColor.AQUA + "" + ChatColor.BOLD + "Amazing");
                             break;
                     }
-                    buildVoteMap.put(e.getPlayer(), val);
+                    buildVoteMap.put(e.getPlayer(), vote);
                 }
             }
             if(e.getMaterial() == Material.FLINT_AND_STEEL) {
@@ -132,5 +132,12 @@ public class ItemClickListener implements Listener {
             }
         }
         return null;
+    }
+    public static enum Vote {
+        TERRIBLE,
+        BAD,
+        GOOD,
+        GREAT,
+        AMAZING
     }
 }
