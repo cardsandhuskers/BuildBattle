@@ -65,7 +65,7 @@ public class BuildVotingHandler {
             Arena a = arenaList.get(counter - 1);
             a.teleportAllToSpawn();
             buildVotingTimer();
-            Bukkit.broadcastMessage("Voting Round " + (counter));
+            Bukkit.broadcastMessage(ChatColor.GREEN + "Voting Round " + ChatColor.AQUA + (counter));
             buildVoteMap.clear();
         }
 
@@ -75,7 +75,7 @@ public class BuildVotingHandler {
      * Counts votes and updates relevant things
      */
     private void countVotes() {
-        System.out.println("Round counter: " + counter);
+        //System.out.println("Round counter: " + counter);
         //if(counter < 1) counter = 1;
         Team t = arenaList.get(counter - 1).getTeam();
         if(t == null) return;
@@ -131,7 +131,7 @@ public class BuildVotingHandler {
                     playerItems.set(voteIndex, playerItems.get(voteIndex) - 1);
                 }
 
-                System.out.println(buildVoteMap.get(p));
+                //System.out.println(buildVoteMap.get(p));
             }
         }
 

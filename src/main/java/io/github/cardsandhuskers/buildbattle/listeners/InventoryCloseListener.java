@@ -16,7 +16,7 @@ public class InventoryCloseListener implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
         if(ChatColor.stripColor(e.getView().getTitle()).equalsIgnoreCase("Vote for the Theme!")) {
-            System.out.println("CLOSE");
+            //System.out.println("CLOSE");
             votingInventoryHandler.closeMenu((Player) e.getPlayer());
         }
     }
