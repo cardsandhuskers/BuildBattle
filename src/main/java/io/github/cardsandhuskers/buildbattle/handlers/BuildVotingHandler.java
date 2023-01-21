@@ -79,7 +79,7 @@ public class BuildVotingHandler {
         //if(counter < 1) counter = 1;
         Team t = arenaList.get(counter - 1).getTeam();
         if(t == null) return;
-        //if player is on the same team as the arena, cancel vote (this may be redundant)
+        //if player is on the same team as the arena, cancel vote (this may be redundant) tt
         for(Player p: t.getOnlinePlayers()) {
             if(buildVoteMap.get(p) != null) {
                 buildVoteMap.remove(p);
