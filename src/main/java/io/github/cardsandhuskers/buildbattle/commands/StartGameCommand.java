@@ -8,7 +8,6 @@ import io.github.cardsandhuskers.buildbattle.listeners.*;
 import io.github.cardsandhuskers.buildbattle.objects.Arena;
 import io.github.cardsandhuskers.buildbattle.objects.Countdown;
 import io.github.cardsandhuskers.teams.objects.Team;
-import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -29,10 +28,8 @@ public class StartGameCommand implements CommandExecutor {
     private ArrayList<Arena> arenaList;
     private BuildBattle plugin;
     private GameStartHandler gameStartHandler;
-    private PlayerPointsAPI ppAPI;
 
-    public StartGameCommand(BuildBattle plugin, PlayerPointsAPI ppAPI) {
-        this.ppAPI =ppAPI;
+    public StartGameCommand(BuildBattle plugin) {
         this.plugin = plugin;
     }
 
@@ -117,7 +114,7 @@ public class StartGameCommand implements CommandExecutor {
                     }
                     BuildBattle.timeVar = 0;
 
-                    gameStartHandler = new GameStartHandler(plugin, arenaList, ppAPI);
+                    gameStartHandler = new GameStartHandler(plugin, arenaList);
                     gameStartHandler.startGame();
                 },
 

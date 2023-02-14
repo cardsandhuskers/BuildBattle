@@ -7,7 +7,6 @@ import io.github.cardsandhuskers.buildbattle.listeners.PlayerMoveListener;
 import io.github.cardsandhuskers.buildbattle.objects.Arena;
 import io.github.cardsandhuskers.buildbattle.objects.Countdown;
 import io.github.cardsandhuskers.teams.objects.Team;
-import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -28,11 +27,9 @@ public class GameStartHandler {
     private BuildBattle plugin;
     private ArrayList<Arena> arenaList;
     private VoteCounter voteCounter;
-    private PlayerPointsAPI ppAPI;
     private VotingInventoryHandler votingInventoryHandler;
     private HashMap<Player, ItemClickListener.Vote> buildVoteMap = new HashMap<>();
-    public GameStartHandler(BuildBattle plugin, ArrayList<Arena> arenaList, PlayerPointsAPI ppAPI) {
-        this.ppAPI = ppAPI;
+    public GameStartHandler(BuildBattle plugin, ArrayList<Arena> arenaList) {
         this.plugin = plugin;
         this.arenaList = arenaList;
     }

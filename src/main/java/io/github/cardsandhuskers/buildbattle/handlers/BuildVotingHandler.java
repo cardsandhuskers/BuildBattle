@@ -5,7 +5,6 @@ import io.github.cardsandhuskers.buildbattle.listeners.ItemClickListener;
 import io.github.cardsandhuskers.buildbattle.objects.Arena;
 import io.github.cardsandhuskers.buildbattle.objects.Countdown;
 import io.github.cardsandhuskers.teams.objects.Team;
-import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -89,7 +88,7 @@ public class BuildVotingHandler {
         //total number of voters
         int numVoters = 0;
         //sum of points to give team
-        int points = 0;
+        double points = 0;
 
         //get all the people who have voted and remove voting item from them
         for(Player p: buildVoteMap.keySet()) {
@@ -154,8 +153,8 @@ public class BuildVotingHandler {
         //System.out.println("NUM PLAYERS: " + numPlayers + " TOTAL: " + total + "") ;
 
         //add in multiplier and divide total points by num players on the team
-        points = (int) (points * multiplier);
-        int playerPoints = points/t.getSize();
+        points = (points * multiplier);
+        double playerPoints = points/t.getSize();
         //for each player on the given team, give them points
         for(Player p:t.getOnlinePlayers()) {
             t.addTempPoints(p, playerPoints);
