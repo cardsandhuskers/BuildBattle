@@ -66,6 +66,13 @@ public class BuildVotingHandler {
             buildVotingTimer();
             Bukkit.broadcastMessage(ChatColor.GREEN + "Voting Round " + ChatColor.AQUA + (counter));
             buildVoteMap.clear();
+            for(Team t: handler.getTeams()) {
+                for(Player p:t.getOnlinePlayers()) {
+                    p.setGameMode(GameMode.ADVENTURE);
+                    p.setAllowFlight(true);
+                    p.setFlying(true);
+                }
+            }
         }
 
     }
