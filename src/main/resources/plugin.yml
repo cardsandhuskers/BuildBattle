@@ -4,7 +4,8 @@ main: io.github.cardsandhuskers.buildbattle.BuildBattle
 api-version: 1.19
 authors: [ cardsandhuskers ]
 description: Build Battle plugin
-depend: [PlayerPoints, PlaceholderAPI, Teams]
+depend: [PlaceholderAPI, Teams]
+softdepend: [Multiverse-Core]
 commands:
   setBuildBattleArena:
     description: sets the spawn point for the specified arena and corner
