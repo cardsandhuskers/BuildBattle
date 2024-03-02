@@ -3,6 +3,7 @@ package io.github.cardsandhuskers.buildbattle.handlers;
 import io.github.cardsandhuskers.buildbattle.BuildBattle;
 import io.github.cardsandhuskers.buildbattle.listeners.InventoryClickListener;
 import io.github.cardsandhuskers.buildbattle.listeners.ItemClickListener;
+import io.github.cardsandhuskers.buildbattle.listeners.PlayerDamageListener;
 import io.github.cardsandhuskers.buildbattle.listeners.PlayerMoveListener;
 import io.github.cardsandhuskers.buildbattle.objects.Arena;
 import io.github.cardsandhuskers.buildbattle.objects.Countdown;
@@ -48,6 +49,7 @@ public class GameStartHandler {
         }
 
         getServer().getPluginManager().registerEvents(new PlayerMoveListener(arenaList), plugin);
+        getServer().getPluginManager().registerEvents(new PlayerDamageListener(), plugin);
         getServer().getPluginManager().registerEvents(new ItemClickListener(voteCounter, votingInventoryHandler, buildVoteMap, arenaList), plugin);
         getServer().getPluginManager().registerEvents(new InventoryClickListener(votingInventoryHandler, voteCounter, arenaList), plugin);
 
