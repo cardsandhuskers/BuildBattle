@@ -19,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static io.github.cardsandhuskers.buildbattle.BuildBattle.handler;
 import static org.bukkit.Bukkit.getServer;
@@ -28,7 +29,7 @@ public class GameStartHandler {
     private ArrayList<Arena> arenaList;
     private VoteCounter voteCounter;
     private VotingInventoryHandler votingInventoryHandler;
-    private HashMap<Player, ItemClickListener.Vote> buildVoteMap = new HashMap<>();
+    private HashMap<UUID, ItemClickListener.Vote> buildVoteMap = new HashMap<>();
     public GameStartHandler(BuildBattle plugin, ArrayList<Arena> arenaList) {
         this.plugin = plugin;
         this.arenaList = arenaList;

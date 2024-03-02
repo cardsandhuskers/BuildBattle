@@ -1,13 +1,15 @@
 package io.github.cardsandhuskers.buildbattle.handlers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class VoteCounter {
-    private HashMap<Player, Integer> playerVoteMap;
+    private HashMap<UUID, Integer> playerVoteMap;
     private int leadingTheme;
 
     public VoteCounter() {
@@ -20,7 +22,7 @@ public class VoteCounter {
     }
 
     public void addPlayerVote(Player p, int voteIndex) {
-        playerVoteMap.put(p, voteIndex);
+        playerVoteMap.put(p.getUniqueId(), voteIndex);
     }
 
 
@@ -28,8 +30,10 @@ public class VoteCounter {
 
         int votes1 = 0, votes2 = 0, votes3 = 0, votes4 = 0, votes5 = 0;
 
-        for(Player p:playerVoteMap.keySet()) {
-            int vote = playerVoteMap.get(p);
+        for(UUID u:playerVoteMap.keySet()) {
+
+
+            int vote = playerVoteMap.get(u);
             switch (vote) {
                 case 1:
                     votes1++;

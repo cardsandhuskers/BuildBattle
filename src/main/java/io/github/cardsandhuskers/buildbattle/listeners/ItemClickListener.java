@@ -18,6 +18,7 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static io.github.cardsandhuskers.buildbattle.BuildBattle.handler;
 
@@ -25,7 +26,7 @@ public class ItemClickListener implements Listener {
 
     private VoteCounter voteCounter;
     private VotingInventoryHandler votingInventoryHandler;
-    private HashMap<Player, Vote> buildVoteMap;
+    private HashMap<UUID, Vote> buildVoteMap;
     private ArrayList<Arena> arenaList;
 
     public ItemClickListener(VoteCounter voteCounter, VotingInventoryHandler votingInventoryHandler, HashMap buildVoteMap, ArrayList<Arena> arenaList) {
@@ -58,7 +59,7 @@ public class ItemClickListener implements Listener {
                     boolean cancel = true;
                     for(Arena a :arenaList) {
                         if(a.getTeam().equals(t)) {
-                            if(a.isValidLocation(e.getClickedBlock().getLocation())) {
+                            if(e.getClickedBlock()!= null && a.isValidLocation(e.getClickedBlock().getLocation())) {
                                 cancel = false;
                             }
                         }
@@ -100,7 +101,7 @@ public class ItemClickListener implements Listener {
                             p.sendMessage("You voted " + ChatColor.AQUA + "" + ChatColor.BOLD + "Amazing");
                             break;
                     }
-                    buildVoteMap.put(e.getPlayer(), vote);
+                    buildVoteMap.put(e.getPlayer().getUniqueId(), vote);
                 }
             }
             if(e.getMaterial() == Material.FLINT_AND_STEEL) {

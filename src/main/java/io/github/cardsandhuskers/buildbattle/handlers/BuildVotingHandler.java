@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static io.github.cardsandhuskers.buildbattle.BuildBattle.handler;
 import static io.github.cardsandhuskers.buildbattle.BuildBattle.multiplier;
@@ -22,8 +23,8 @@ import static io.github.cardsandhuskers.buildbattle.BuildBattle.multiplier;
 public class BuildVotingHandler {
     private BuildBattle plugin;
     private ArrayList<Arena> arenaList;
-    private HashMap<Player, ItemClickListener.Vote> buildVoteMap;
-    private HashMap<OfflinePlayer, ArrayList<Integer>> itemNumbersMap;
+    private HashMap<UUID, ItemClickListener.Vote> buildVoteMap;
+    private HashMap<UUID, ArrayList<Integer>> itemNumbersMap;
 
     public static int counter = 0;
 
@@ -45,7 +46,7 @@ public class BuildVotingHandler {
         //put every participating player in a map with the array
         for(Team team: handler.getTeams()) {
             for(Player p:team.getOnlinePlayers()) {
-                itemNumbersMap.put(p, (ArrayList<Integer>) initial.clone());
+                itemNumbersMap.put(p.getUniqueId(), (ArrayList<Integer>) initial.clone());
             }
         }
         giveVotingItems();
@@ -87,8 +88,8 @@ public class BuildVotingHandler {
         if(t == null) return;
         //if player is on the same team as the arena, cancel vote (this may be redundant) tt
         for(Player p: t.getOnlinePlayers()) {
-            if(buildVoteMap.get(p) != null) {
-                buildVoteMap.remove(p);
+            if(buildVoteMap.get(p.getUniqueId()) != null) {
+                buildVoteMap.remove(p.getUniqueId());
             }
         }
 
@@ -98,46 +99,44 @@ public class BuildVotingHandler {
         double points = 0;
 
         //get all the people who have voted and remove voting item from them
-        for(Player p: buildVoteMap.keySet()) {
+        for(UUID u: buildVoteMap.keySet()) {
+            Player p = Bukkit.getPlayer(u);
             //if they're not in their own arena (I think this is redundant)
-            if(p != null /*&& handler.getPlayerTeam(p) != null && !handler.getPlayerTeam(p).equals(t)*/) {
-                numVoters ++;
+            //if(p != null /*&& handler.getPlayerTeam(p) != null && !handler.getPlayerTeam(p).equals(t)*/) {
+            numVoters ++;
 
-                ItemClickListener.Vote vote = buildVoteMap.get(p);
+            ItemClickListener.Vote vote = buildVoteMap.get(u);
 
-                ArrayList<Integer> playerItems = itemNumbersMap.get(p);
+            ArrayList<Integer> playerItems = itemNumbersMap.get(u);
 
-                int voteIndex = 2;
-                switch(vote) {
-                    case TERRIBLE:
-                        voteIndex = 0;
-                        points += plugin.getConfig().getInt("terrible");
-                    break;
-                    case BAD:
-                        voteIndex = 1;
-                        points += plugin.getConfig().getInt("bad");
-                    break;
-                    case GOOD:
-                        voteIndex = 2;
-                        points += plugin.getConfig().getInt("good");
-                    break;
-                    case GREAT:
-                        voteIndex = 3;
-                        points += plugin.getConfig().getInt("great");
-                    break;
-                    case AMAZING:
-                        voteIndex = 4;
-                        points += plugin.getConfig().getInt("amazing");
-                    break;
-                }
+            int voteIndex = 2;
+            switch(vote) {
+                case TERRIBLE:
+                    voteIndex = 0;
+                    points += plugin.getConfig().getInt("terrible");
+                break;
+                case BAD:
+                    voteIndex = 1;
+                    points += plugin.getConfig().getInt("bad");
+                break;
+                case GOOD:
+                    voteIndex = 2;
+                    points += plugin.getConfig().getInt("good");
+                break;
+                case GREAT:
+                    voteIndex = 3;
+                    points += plugin.getConfig().getInt("great");
+                break;
+                case AMAZING:
+                    voteIndex = 4;
+                    points += plugin.getConfig().getInt("amazing");
+                break;
+            }
 
-                //error handling
-                if(playerItems != null) {
-                    //removes item corresponding to their vote from their inventory
-                    playerItems.set(voteIndex, playerItems.get(voteIndex) - 1);
-                }
-
-                //System.out.println(buildVoteMap.get(p));
+            //error handling
+            if(playerItems != null) {
+                //removes item corresponding to their vote from their inventory
+                playerItems.set(voteIndex, playerItems.get(voteIndex) - 1);
             }
         }
 
