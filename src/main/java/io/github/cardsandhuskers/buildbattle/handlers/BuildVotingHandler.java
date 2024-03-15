@@ -306,7 +306,7 @@ public class BuildVotingHandler {
         //set itemstack quantities for each player
         for(Team t:handler.getTeams()) {
             for(Player p:t.getOnlinePlayers()) {
-                ArrayList<Integer> tempList = itemNumbersMap.get(p);
+                ArrayList<Integer> tempList = itemNumbersMap.get(p.getUniqueId());
                 if(tempList != null) {
                     Inventory i = p.getInventory();
 
